@@ -22,8 +22,8 @@ dependencies {
     implementation("net.lingala.zip4j:zip4j:2.9.1")
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "11"
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "16"
 }
 
 compose.desktop {
