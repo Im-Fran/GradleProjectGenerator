@@ -150,8 +150,15 @@ fun generateWrapper(folder: File, gradleVersion: String){
     val gradleBin = if(System.getProperty("os.name").lowercase().contains("windows")) "gradle-$gradleVersion/bin/gradle.bat" else "gradle-$gradleVersion/bin/gradle"
     val process = ProcessBuilder(gradleBin, "wrapper").directory(folder).start()
     process.waitFor()
-    deleteRecursive(File(folder, "gradle-$gradleVersion-bin.zip"))
-    deleteRecursive(File(folder, "gradle-$gradleVersion/"))
+    File(folder, "gp-generator.log").also {
+        if(!it.exists()) it.createNewFile()
+        it.writeBytes(process.inputStream.bufferedReader().readText().toByteArray())
+    }
+    process.onExit().whenComplete { _, t ->
+        File(folder, "gradle-$gradleVersion-bin.zip").toPath().deleteIfExists()
+        deleteRecursive(File(folder, "gradle-$gradleVersion/"))
+        t.printStackTrace()
+    }
 }
 
 fun deleteRecursive(fileOrDirectory: File) {
